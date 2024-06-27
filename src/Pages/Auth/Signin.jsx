@@ -7,6 +7,7 @@ const Signin = () => {
   const navigate = useNavigate();
   useEffect(() => {
     document.title = "Poet AI - Signin";
+    window.scrollTo(0, 0);
   }, []);
   const fn_submit = (e) => {
     e.preventDefault();

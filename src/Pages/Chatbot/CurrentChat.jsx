@@ -27,24 +27,24 @@ const CurrentChat = ({ sideBar, setSideBar }) => {
           <div className="flex flex-col items-center gap-2">
             <p className="font-[500]">Thematic Poetry</p>
             <div className="flex flex-col gap-1.5">
-              <p className="bg-[var(--main-color-blur)] text-center w-[400px] p-2 rounded-full">Poetic Suggestion for 14 August</p>
-              <p className="bg-[var(--main-color-blur)] text-center w-[400px] p-2 rounded-full">Revolutionary Poetry for Election Speech</p>
+              <p className="bg-[var(--main-color-blur)] text-center w-[300px] sm:w-[400px] px-3 py-2 sm:p-2 rounded-full">Poetic Suggestion for 14 August</p>
+              <p className="bg-[var(--main-color-blur)] text-center w-[300px] sm:w-[400px] px-3 py-2 sm:p-2 rounded-full">Revolutionary Poetry for Election Speech</p>
             </div>
           </div>
           <div className="flex flex-col items-center gap-2">
             <p className="font-[500]">Ambiance</p>
             <div className="flex flex-col gap-1.5">
-              <p className="bg-[var(--main-color-blur)] text-center w-[400px] p-2 rounded-full">Romantic Poetry</p>
-              <p className="bg-[var(--main-color-blur)] text-center w-[400px] p-2 rounded-full">Sad Poetry</p>
-              <p className="bg-[var(--main-color-blur)] text-center w-[400px] p-2 rounded-full">Emotional Poetry</p>
+              <p className="bg-[var(--main-color-blur)] text-center w-[300px] sm:w-[400px] px-3 py-2 sm:p-2 rounded-full">Romantic Poetry</p>
+              <p className="bg-[var(--main-color-blur)] text-center w-[300px] sm:w-[400px] px-3 py-2 sm:p-2 rounded-full">Sad Poetry</p>
+              <p className="bg-[var(--main-color-blur)] text-center w-[300px] sm:w-[400px] px-3 py-2 sm:p-2 rounded-full">Emotional Poetry</p>
             </div>
           </div>
           <div className="flex flex-col items-center gap-2">
             <p className="font-[500]">Multilengual Support</p>
             <div className="flex flex-col gap-1.5">
-              <p className="bg-[var(--main-color-blur)] text-center w-[400px] p-2 rounded-full">Romantic Poetry</p>
-              <p className="bg-[var(--main-color-blur)] text-center w-[400px] p-2 rounded-full">Sad Poetry</p>
-              <p className="bg-[var(--main-color-blur)] text-center w-[400px] p-2 rounded-full">Emotional Poetry</p>
+              <p className="bg-[var(--main-color-blur)] text-center w-[300px] sm:w-[400px] px-3 py-2 sm:p-2 rounded-full">Romantic Poetry</p>
+              <p className="bg-[var(--main-color-blur)] text-center w-[300px] sm:w-[400px] px-3 py-2 sm:p-2 rounded-full">Sad Poetry</p>
+              <p className="bg-[var(--main-color-blur)] text-center w-[300px] sm:w-[400px] px-3 py-2 sm:p-2 rounded-full">Emotional Poetry</p>
             </div>
           </div>
         </div>

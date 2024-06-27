@@ -6,6 +6,7 @@ const Chatbot = () => {
   const [sideBar, setSideBar] = useState(true);
   useEffect(() => {
     document.title = "Poet AI - Chatbot";
+    window.scrollTo(0, 0);
   }, []);
   return (
     <div className="flex">

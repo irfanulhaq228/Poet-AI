@@ -5,8 +5,6 @@ import { RiLogoutBoxLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { GoDotFill } from "react-icons/go";
 
-import profile from "../../assets/imgs/profile.jpeg";
-
 const History = ({ sideBar, setSideBar }) => {
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState(12);

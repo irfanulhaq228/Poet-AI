@@ -7,6 +7,7 @@ const Signup = () => {
   const navigate = useNavigate();
   useEffect(() => {
     document.title = "Poet AI - Signup";
+    window.scrollTo(0, 0);
   }, []);
   const fn_submit = () => {
     navigate("/sign-in");
