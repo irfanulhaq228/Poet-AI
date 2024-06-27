@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root{
+  --main-color: rgb(221, 180, 228);
+  --main-color-blur: rgba(221, 180, 228, 0.3);
+  --sec-color: rgb(112, 62, 120);
+  --sec-color-blur: rgb(112, 62, 120, 0.2);
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+.input{
+  border: 1px solid var(--main-color);
+  border-radius: 8px;
+  height: 35px;
+  padding: 0 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.input:focus{
+  outline: none;
+  border: 1px solid var(--sec-color);
+}
+
+::-webkit-scrollbar{
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb{
+  background-color: var(--sec-color);
+  border-radius: 10px;
+}
+
+/* ==============================Auth */
+
+.auth-main {
+  background-image: url("./assets/imgs/auth-bg-2.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+}
+
+.auth-main .auth-content {
+  background-color: rgba(1, 1, 1, 0.5);
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-main .auth-content .auth-front{
+  min-height: 500px;
+  background-color: white;
+  border-radius: 20px;
+  margin: 50px 0;
+}
