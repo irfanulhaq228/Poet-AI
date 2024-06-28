@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Cookies from "js-cookie";
 
 import { FaArrowLeft } from "react-icons/fa6";
 import { RiLogoutBoxLine } from "react-icons/ri";
@@ -170,7 +171,7 @@ const History = ({ sideBar, setSideBar }) => {
       <div className="min-h-[65px] absolute w-full bottom-0 flex items-center justify-center">
         <p
           className="flex items-center justify-center py-1.5 px-5 rounded-md font-[600] text-[17px] bg-[var(--sec-color)] cursor-pointer text-[white]"
-          onClick={() => navigate("/sign-in")}
+          onClick={() => {navigate("/sign-in"); Cookies.remove('auth')}}
         >
           <RiLogoutBoxLine />
           &nbsp; Logout
