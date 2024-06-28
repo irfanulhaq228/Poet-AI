@@ -1,18 +1,43 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 import svg from "../../assets/svgs/auth-svg.svg";
-import { useNavigate } from "react-router-dom";
+import { signinSchema } from "../../schema/schema";
+import { fn_signinApi } from "../../api/api";
 
 const Signin = () => {
   const navigate = useNavigate();
+  const [loader, setLoader] = useState(false);
+  const initialValues = {
+    email: "",
+    password: "",
+  };
   useEffect(() => {
     document.title = "Poet AI - Signin";
     window.scrollTo(0, 0);
   }, []);
-  const fn_submit = (e) => {
-    e.preventDefault();
-    navigate("/chat-bot");
-  };
+
+  const Formik = useFormik({
+    initialValues,
+    validationSchema: signinSchema,
+    onSubmit: async (values) => {
+      setLoader(true);
+      const response = await fn_signinApi(values);
+      if (response?.status === 200) {
+        toast.success("Login Successfull");
+        Cookies.set("auth", response?.data?.response?.token, { expires: 7 });
+        return navigate("/chat-bot");
+      } else {
+        setLoader(false);
+        toast.error(
+          response?.data?.message ? response?.data?.message : "Server Error"
+        );
+      }
+    },
+  });
   return (
     <div className="auth-main">
       <div className="auth-content">
@@ -33,20 +58,51 @@ const Signin = () => {
             </p>
             <form
               className="p-5 md:px-10 flex flex-col gap-3"
-              onSubmit={(e) => fn_submit(e)}
+              onSubmit={Formik.handleSubmit}
             >
               <div className="flex flex-col font-[500] gap-1">
                 <label className="text-[14px]">Email</label>
-                <input className="input" />
+                <input
+                  className="input"
+                  name="email"
+                  value={Formik.values.email}
+                  onChange={Formik.handleChange}
+                  onBlur={Formik.handleBlur}
+                />
+                {Formik.touched.email && Formik.errors.email && (
+                  <p className="text-red-500 text-[12px] mt-[-3px]">
+                    {Formik.errors.email}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col font-[500] gap-1">
                 <label className="text-[14px]">Password</label>
-                <input className="input" type="password" />
+                <input
+                  className="input"
+                  name="password"
+                  value={Formik.values.password}
+                  onChange={Formik.handleChange}
+                  onBlur={Formik.handleBlur}
+                />
+                {Formik.touched.password && Formik.errors.password && (
+                  <p className="text-red-500 text-[12px] mt-[-3px]">
+                    {Formik.errors.password}
+                  </p>
+                )}
               </div>
-              <input
-                type="submit"
-                className="bg-[var(--main-color)] h-[40px] rounded-[8px] font-[600] text-[15px] cursor-pointer mt-2"
-              />
+              {!loader ? (
+                <input
+                  type="submit"
+                  className="bg-[var(--main-color)] h-[40px] rounded-[8px] font-[600] text-[15px] cursor-pointer mt-2"
+                />
+              ) : (
+                <button
+                  className="bg-gray-300 h-[40px] rounded-[8px] font-[600] text-[15px] mt-2 cursor-not-allowed"
+                  disabled
+                >
+                  Loading...
+                </button>
+              )}
             </form>
             <p className="text-center text-[15px] font-[500] mt-1">
               Don't have Account?{" "}

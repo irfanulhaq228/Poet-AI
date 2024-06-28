@@ -3,7 +3,7 @@ import History from "./History";
 import CurrentChat from "./CurrentChat";
 
 const Chatbot = () => {
-  const [sideBar, setSideBar] = useState(false);
+  const [sideBar, setSideBar] = useState(true);
   useEffect(() => {
     document.title = "Poet AI - Chatbot";
     window.scrollTo(0, 0);
