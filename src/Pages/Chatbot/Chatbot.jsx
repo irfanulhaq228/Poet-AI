@@ -5,22 +5,27 @@ import CurrentChat from "./CurrentChat";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
+import { fn_getUserDataApi } from "../../api/api";
 
 const Chatbot = () => {
   const navigate = useNavigate();
   const [sideBar, setSideBar] = useState(true);
   const [loading, setLoading] = useState(true);
-  const token = Cookies.get("auth");
+  const [userData, setUserData] = useState({});
+  const token = Cookies.get("Authorization");
+  const fn_getUserData = async () => {
+    const response = await fn_getUserDataApi(token);
+    if (response?.status === 200) {
+      setUserData(response?.data?.response);
+      setLoading(false);
+    } else {
+      navigate("/sign-in");
+    }
+  };
   useEffect(() => {
     document.title = "Poet AI - Chatbot";
     window.scrollTo(0, 0);
-    setTimeout(() => {
-      if (token === undefined || token === null) {
-        navigate("/sign-in");
-      } else {
-        setLoading(false);
-      }
-    }, 1000);
+    fn_getUserData();
   }, []);
   if (loading) {
     return (
@@ -40,7 +45,7 @@ const Chatbot = () => {
   }
   return (
     <div className="flex">
-      <History sideBar={sideBar} setSideBar={setSideBar} />
+      <History sideBar={sideBar} setSideBar={setSideBar} userData={userData} />
       <CurrentChat sideBar={sideBar} setSideBar={setSideBar} />
     </div>
   );

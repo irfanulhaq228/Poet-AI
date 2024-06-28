@@ -6,7 +6,7 @@ import { RiLogoutBoxLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { GoDotFill } from "react-icons/go";
 
-const History = ({ sideBar, setSideBar }) => {
+const History = ({ sideBar, setSideBar, userData }) => {
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState(12);
   const fn_changeTab = (number) => {
@@ -27,10 +27,15 @@ const History = ({ sideBar, setSideBar }) => {
       </button>
       <div className="h-[10vh] min-h-[65px] flex gap-3 items-center ps-3 font-[700] text-[19px] text-[var(--sec-color)] border-b border-b-[var(--sec-color)]">
         <div className="h-9 w-9 rounded-full shadow-md outline outline-1 outline-[var(--sec-color)] bg-gray-200 flex justify-center items-center">
-          <span className="text-[15px] font-[700]">JD</span>
+          <span className="text-[15px] font-[700] uppercase">
+            {userData?.first_name?.slice(0, 1)}
+            {userData?.last_name?.slice(0, 1)}
+          </span>
         </div>
         <p className="flex flex-col">
-          <span>John Due</span>
+          <span className="capitalize">
+            {userData?.first_name} {userData?.last_name}
+          </span>
           <span className="text-[10px] text-green-700 flex items-center gap-1">
             <GoDotFill /> Online
           </span>
@@ -171,7 +176,10 @@ const History = ({ sideBar, setSideBar }) => {
       <div className="min-h-[65px] absolute w-full bottom-0 flex items-center justify-center">
         <p
           className="flex items-center justify-center py-1.5 px-5 rounded-md font-[600] text-[17px] bg-[var(--sec-color)] cursor-pointer text-[white]"
-          onClick={() => {navigate("/sign-in"); Cookies.remove('auth')}}
+          onClick={() => {
+            navigate("/sign-in");
+            Cookies.remove("Authorization");
+          }}
         >
           <RiLogoutBoxLine />
           &nbsp; Logout

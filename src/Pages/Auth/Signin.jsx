@@ -13,7 +13,7 @@ const Signin = () => {
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [loading, setLoading] = useState(true);
-  const token = Cookies.get("auth");
+  const token = Cookies.get("Authorization");
 
   const initialValues = {
     email: "",
@@ -40,7 +40,7 @@ const Signin = () => {
       const response = await fn_signinApi(values);
       if (response?.status === 200) {
         toast.success("Login Successfull");
-        Cookies.set("auth", response?.data?.response?.token, { expires: 7 });
+        Cookies.set("Authorization", `Bearer ${response?.data?.response?.token}`, { expires: 7 });
         return navigate("/chat-bot");
       } else {
         setLoader(false);

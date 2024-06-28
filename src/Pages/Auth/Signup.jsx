@@ -14,7 +14,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [loading, setLoading] = useState(true);
-  const token = Cookies.get("auth");
+  const token = Cookies.get("Authorization");
   const initialValues = {
     email: "",
     first_name: "",
@@ -42,7 +42,7 @@ const Signup = () => {
       const response = await fn_signupApi(values);
       if (response?.status === 201) {
         toast.success("Account Created Successfully");
-        Cookies.set("auth", response?.data?.response?.token, { expires: 7 });
+        Cookies.set("Authorization", `Bearer ${response?.data?.response?.token}`, { expires: 7 });
         return navigate("/chat-bot");
       } else {
         setLoader(false);
