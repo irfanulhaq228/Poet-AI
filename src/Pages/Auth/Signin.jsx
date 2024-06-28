@@ -7,17 +7,29 @@ import Cookies from "js-cookie";
 import svg from "../../assets/svgs/auth-svg.svg";
 import { signinSchema } from "../../schema/schema";
 import { fn_signinApi } from "../../api/api";
+import { ThreeDots } from "react-loader-spinner";
 
 const Signin = () => {
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const token = Cookies.get("auth");
+
   const initialValues = {
     email: "",
     password: "",
   };
+
   useEffect(() => {
     document.title = "Poet AI - Signin";
     window.scrollTo(0, 0);
+    setTimeout(() => {
+      if (token) {
+        navigate("/chat-bot");
+      } else {
+        setLoading(false);
+      }
+    }, 1000);
   }, []);
 
   const Formik = useFormik({
@@ -38,6 +50,24 @@ const Signin = () => {
       }
     },
   });
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <ThreeDots
+          visible={true}
+          height="80"
+          width="80"
+          color="rgb(112, 62, 120)"
+          radius="9"
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="auth-main">
       <div className="auth-content">
@@ -78,6 +108,7 @@ const Signin = () => {
               <div className="flex flex-col font-[500] gap-1">
                 <label className="text-[14px]">Password</label>
                 <input
+                  type="password"
                   className="input"
                   name="password"
                   value={Formik.values.password}

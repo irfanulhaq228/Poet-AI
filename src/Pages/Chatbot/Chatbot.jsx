@@ -20,7 +20,7 @@ const Chatbot = () => {
       } else {
         setLoading(false);
       }
-    }, 2000);
+    }, 1000);
   }, []);
   if (loading) {
     return (

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ThreeDots } from "react-loader-spinner";
 import Cookies from "js-cookie";
 
 import svg from "../../assets/svgs/auth-svg.svg";
@@ -12,6 +13,8 @@ import { fn_signupApi } from "../../api/api";
 const Signup = () => {
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const token = Cookies.get("auth");
   const initialValues = {
     email: "",
     first_name: "",
@@ -22,8 +25,15 @@ const Signup = () => {
   useEffect(() => {
     document.title = "Poet AI - Signup";
     window.scrollTo(0, 0);
+    setTimeout(() => {
+      if (token) {
+        navigate("/chat-bot");
+      } else {
+        setLoading(false);
+      }
+    }, 1000);
   }, []);
-  
+
   const Formik = useFormik({
     initialValues,
     validationSchema: signupSchema,
@@ -42,6 +52,23 @@ const Signup = () => {
       }
     },
   });
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <ThreeDots
+          visible={true}
+          height="80"
+          width="80"
+          color="rgb(112, 62, 120)"
+          radius="9"
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="auth-main">
@@ -113,6 +140,7 @@ const Signup = () => {
               <div className="flex flex-col font-[500] gap-1">
                 <label className="text-[14px]">Password</label>
                 <input
+                  type="password"
                   className="input"
                   name="password"
                   value={Formik.values.password}
@@ -128,6 +156,7 @@ const Signup = () => {
               <div className="flex flex-col font-[500] gap-1">
                 <label className="text-[14px]">Confirm Password</label>
                 <input
+                  type="password"
                   className="input"
                   name="confirm_password"
                   value={Formik.values.confirm_password}
