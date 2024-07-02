@@ -40,7 +40,11 @@ const Signin = () => {
       const response = await fn_signinApi(values);
       if (response?.status === 200) {
         toast.success("Login Successfull");
-        Cookies.set("Authorization", `Bearer ${response?.data?.response?.token}`, { expires: 7 });
+        Cookies.set(
+          "Authorization",
+          `Bearer ${response?.data?.response?.token}`,
+          { expires: 7 }
+        );
         return navigate("/chat-bot");
       } else {
         setLoader(false);
@@ -139,7 +143,7 @@ const Signin = () => {
               Don't have Account?{" "}
               <span
                 className="text-[var(--sec-color)] font-[600] cursor-pointer hover:underline"
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/sign-up")}
               >
                 Signup
               </span>{" "}
