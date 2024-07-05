@@ -1,18 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
 import { FaArrowLeft } from "react-icons/fa6";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { GoDotFill } from "react-icons/go";
+import { ColorRing } from "react-loader-spinner";
 
-const History = ({ sideBar, setSideBar, userData }) => {
+const History = ({
+  sideBar,
+  setSideBar,
+  userData,
+  token,
+  history,
+  selectedHistory,
+  setSelectedHistory,
+  fn_getChatHistoryById,
+  loaderHistory,
+  setLoaderHistory,
+  setMessages,
+  setOutputOccurs
+}) => {
   const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState(12);
-  const fn_changeTab = (number) => {
-    if (selectedTab === number) return;
-    setSelectedTab(number);
-  };
   return (
     <div
       className={`w-[250px] bg-[var(--main-color)] min-h-[100vh] absolute transition-all duration-500 shadow-xl ${
@@ -25,8 +34,8 @@ const History = ({ sideBar, setSideBar, userData }) => {
       >
         <FaArrowLeft />
       </button>
-      <div className="h-[10vh] min-h-[65px] flex gap-3 items-center ps-3 font-[700] text-[19px] text-[var(--sec-color)] border-b border-b-[var(--sec-color)]">
-        <div className="h-9 w-9 rounded-full shadow-md outline outline-1 outline-[var(--sec-color)] bg-gray-200 flex justify-center items-center">
+      <div className="h-[70px] min-h-[70px] flex gap-3 items-center ps-3 font-[700] text-[19px] text-[var(--sec-color)] border-b border-b-[var(--sec-color)]">
+        <div className="h-9 w-9 rounded-full shadow-md outline outline-1 outline-[var(--sec-color)] bg-gray-200 flex justify-center items-center pt-1">
           <span className="text-[15px] font-[700] uppercase">
             {userData?.first_name?.slice(0, 1)}
             {userData?.last_name?.slice(0, 1)}
@@ -41,136 +50,54 @@ const History = ({ sideBar, setSideBar, userData }) => {
           </span>
         </p>
       </div>
-      <div className="px-3 h-[80vh] overflow-y-auto">
-        <p className="text-[14px] font-[700] px-3 text-gray-500 pt-5 pb-2">
-          Today
-        </p>
+      <div className="px-3 h-[80vh] overflow-y-auto pt-4">
         <div className="flex flex-col gap-1.5 font-[700] text-[15px]">
           <p
             className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 12
+              selectedHistory === 0
                 ? "bg-[var(--sec-color-blur)]"
                 : "bg-transparent"
             }`}
-            onClick={() => fn_changeTab(12)}
+            onClick={() => {
+              setSelectedHistory(0);
+              setMessages([]);
+              setOutputOccurs(false);
+            }}
           >
-            Chat 12
+            New Chat
           </p>
-          <p
-            className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 11
-                ? "bg-[var(--sec-color-blur)]"
-                : "bg-transparent"
-            }`}
-            onClick={() => fn_changeTab(11)}
-          >
-            Chat 11
-          </p>
-          <p
-            className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 10
-                ? "bg-[var(--sec-color-blur)]"
-                : "bg-transparent"
-            }`}
-            onClick={() => fn_changeTab(10)}
-          >
-            Chat 10
-          </p>
-        </div>
-        <p className="text-[14px] font-[700] px-3 text-gray-500 pt-5 pb-2">
-          Yesterday
-        </p>
-        <div className="flex flex-col gap-1.5 font-[700] text-[15px]">
-          <p
-            className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 9
-                ? "bg-[var(--sec-color-blur)]"
-                : "bg-transparent"
-            }`}
-            onClick={() => fn_changeTab(9)}
-          >
-            Chat 9
-          </p>
-          <p
-            className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 8
-                ? "bg-[var(--sec-color-blur)]"
-                : "bg-transparent"
-            }`}
-            onClick={() => fn_changeTab(8)}
-          >
-            Chat 8
-          </p>
-          <p
-            className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 7
-                ? "bg-[var(--sec-color-blur)]"
-                : "bg-transparent"
-            }`}
-            onClick={() => fn_changeTab(7)}
-          >
-            Chat 7
-          </p>
-          <p
-            className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 6
-                ? "bg-[var(--sec-color-blur)]"
-                : "bg-transparent"
-            }`}
-            onClick={() => fn_changeTab(6)}
-          >
-            Chat 6
-          </p>
-          <p
-            className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 5
-                ? "bg-[var(--sec-color-blur)]"
-                : "bg-transparent"
-            }`}
-            onClick={() => fn_changeTab(5)}
-          >
-            Chat 5
-          </p>
-          <p
-            className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 4
-                ? "bg-[var(--sec-color-blur)]"
-                : "bg-transparent"
-            }`}
-            onClick={() => fn_changeTab(4)}
-          >
-            Chat 4
-          </p>
-          <p
-            className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 3
-                ? "bg-[var(--sec-color-blur)]"
-                : "bg-transparent"
-            }`}
-            onClick={() => fn_changeTab(3)}
-          >
-            Chat 3
-          </p>
-          <p
-            className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 2
-                ? "bg-[var(--sec-color-blur)]"
-                : "bg-transparent"
-            }`}
-            onClick={() => fn_changeTab(2)}
-          >
-            Chat 2
-          </p>
-          <p
-            className={`px-3 h-[32px] rounded-md flex items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-              selectedTab === 1
-                ? "bg-[var(--sec-color-blur)]"
-                : "bg-transparent"
-            }`}
-            onClick={() => fn_changeTab(1)}
-          >
-            Chat 1
-          </p>
+          {history?.map((item, index) => (
+            <p
+              key={index}
+              className={`relative px-3 h-[32px] rounded-md flex justify-between items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
+                selectedHistory === item.id
+                  ? "bg-[var(--sec-color-blur)]"
+                  : "bg-transparent"
+              }`}
+              onClick={() => {
+                fn_getChatHistoryById(item.id);
+                setLoaderHistory(item?.id);
+              }}
+            >
+              {item?.text}
+              {loaderHistory === item?.id && (
+                <ColorRing
+                  visible={true}
+                  height="25"
+                  width="25"
+                  ariaLabel="color-ring-loading"
+                  wrapperClass="color-ring-wrapper"
+                  colors={[
+                    "rgb(112, 62, 120)",
+                    "rgb(112, 62, 120)",
+                    "rgb(112, 62, 120)",
+                    "rgb(112, 62, 120)",
+                    "rgb(112, 62, 120)",
+                  ]}
+                />
+              )}
+            </p>
+          ))}
         </div>
       </div>
       <div className="min-h-[65px] absolute w-full bottom-0 flex items-center justify-center">

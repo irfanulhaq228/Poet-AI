@@ -1,26 +1,53 @@
 import React, { useEffect, useRef, useState } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
-import { FaArrowRight } from "react-icons/fa6";
+import { FaArrowRight, FaCheck } from "react-icons/fa6";
 import { BiSend } from "react-icons/bi";
 import { MdKeyboardVoice } from "react-icons/md";
 import { FaShareAlt, FaRegCopy } from "react-icons/fa";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import { ColorRing } from "react-loader-spinner";
+import { toast } from "react-toastify";
 
-const CurrentChat = ({ sideBar, setSideBar, token }) => {
+const CurrentChat = ({
+  sideBar,
+  setSideBar,
+  token,
+  historyMessages,
+  setMessages,
+  messages,
+  outputOccurs,
+  setOutputOccurs,
+}) => {
   const newToken = token.substring(7);
+  const containerRef = useRef(null);
+  const clientRef = useRef(null);
   const [voice, setVoice] = useState(false);
   const [text, setText] = useState("");
-  const [outputOccurs, setOutputOccurs] = useState(false);
   const [loader, setLoader] = useState(false);
-  const startListening = () =>
-    SpeechRecognition.startListening({ continuous: true });
+  const [copyText, setCopyText] = useState(false);
 
-  const { transcript, browserSupportsSpeechRecognition } =
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
+
+  // ========================================= voice recognization
+
+  const { transcript, resetTranscript, browserSupportsSpeechRecognition } =
     useSpeechRecognition();
+
+  const startListening = () => {
+    resetTranscript();
+    SpeechRecognition.startListening({ continuous: true });
+  };
 
   if (!browserSupportsSpeechRecognition) {
     return null;
@@ -30,9 +57,34 @@ const CurrentChat = ({ sideBar, setSideBar, token }) => {
     setText(transcript);
   }, [transcript]);
 
-  // ========================================= web socket =====================
-  const [messages, setMessages] = useState([]);
-  const clientRef = useRef(null);
+  const handleVoiceClick = () => {
+    if (!voice) {
+      startListening();
+    } else {
+      SpeechRecognition.stopListening();
+    }
+    setVoice(!voice);
+  };
+
+  // ========================================= share and copy output
+
+  useEffect(() => {
+    if (copyText === true) {
+      setTimeout(() => {
+        setCopyText(false);
+      }, 1000);
+    }
+  }, [copyText]);
+
+  const handleShare = (result) => {
+    const message = `Poet Ai: ${result}`;
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(url, "_blank");
+  };
+
+  // ========================================= web socket
 
   useEffect(() => {
     const client = new W3CWebSocket(
@@ -77,14 +129,47 @@ const CurrentChat = ({ sideBar, setSideBar, token }) => {
     const message = {
       query: text,
     };
+    setVoice(false);
     setLoader(true);
+    SpeechRecognition.stopListening();
     if (clientRef.current && clientRef.current.readyState === WebSocket.OPEN) {
       clientRef.current.send(JSON.stringify(message));
     } else {
       console.log("Nothing");
     }
-    setVoice(false);
+    resetTranscript();
   };
+
+  // ========================================= history messages
+
+  useEffect(() => {
+    if (historyMessages === null) {
+      console.log("Not Selected Any History");
+    } else if (historyMessages?.length === 0) {
+      setMessages([]);
+    } else {
+      const result = [];
+      let obj = {};
+      for (let i = 0; i < historyMessages.length; i++) {
+        let item = historyMessages[i];
+        if (!obj.input) {
+          obj.input = item.content;
+        } else if (!obj.result) {
+          obj.result = item.content;
+        }
+
+        if (obj.input && obj.result) {
+          result.push(obj);
+          obj = {};
+        }
+      }
+      if (obj.input || obj.result) {
+        result.push(obj);
+      }
+      setOutputOccurs(true);
+      setMessages(result);
+    }
+  }, [historyMessages]);
 
   return (
     <div
@@ -92,7 +177,7 @@ const CurrentChat = ({ sideBar, setSideBar, token }) => {
         sideBar ? "lg:ms-[250px]" : "ms-0"
       }`}
     >
-      <p className="h-[10vh] min-h-[65px] w-full flex items-center ps-3 font-[800] text-[26px] text-[var(--sec-color)] border-b border-b-gray-400 shadow-xl bg-white gap-5 justify-center">
+      <p className="h-[70px] min-h-[65px] w-full flex items-center ps-3 font-[800] text-[26px] text-[var(--sec-color)] border-b border-b-gray-400 shadow-xl bg-white gap-5 justify-center">
         {!sideBar && (
           <button
             className="absolute left-5 bg-[var(--sec-color)] w-8 h-8 rounded-full flex items-center justify-center shadow-md text-white hover:scale-[1.05] active:scale-[0.9]"
@@ -103,8 +188,12 @@ const CurrentChat = ({ sideBar, setSideBar, token }) => {
         )}
         Poet AI
         <select className="absolute right-1 sm:right-5 top-[6.5vh] sm:top-auto text-[12px] text-black font-[500] focus:outline-none border border-[var(--sec-color)] rounded-[3px] h-[25px]">
-          <option disabled className="p-1">Select Language</option>
-          <option selected className="p-1">Urdu</option>
+          <option disabled className="p-1">
+            Select Language
+          </option>
+          <option selected className="p-1">
+            Urdu
+          </option>
           <option className="p-1">Roman</option>
         </select>
       </p>
@@ -159,7 +248,10 @@ const CurrentChat = ({ sideBar, setSideBar, token }) => {
         )}
         {/* output */}
         {outputOccurs && (
-          <div className="h-[71vh] overflow-y-auto sm:ps-5 sm:w-full flex flex-col items-center">
+          <div
+            ref={containerRef}
+            className="h-[71vh] overflow-y-auto sm:ps-5 sm:w-full flex flex-col items-center"
+          >
             {outputOccurs &&
               messages?.map((item, index) => (
                 <div
@@ -182,10 +274,26 @@ const CurrentChat = ({ sideBar, setSideBar, token }) => {
                     }}
                   />
                   <p className="flex justify-end gap-2">
-                    <FaRegCopy className="cursor-pointer" title="Copy output" />
+                    <CopyToClipboard
+                      text={item?.result}
+                      onCopy={() => setCopyText(true)}
+                    >
+                      {!copyText ? (
+                        <FaRegCopy
+                          className="cursor-pointer"
+                          title="Copy output"
+                        />
+                      ) : (
+                        <FaCheck
+                          className="cursor-pointer"
+                          title="Copy output"
+                        />
+                      )}
+                    </CopyToClipboard>
                     <FaShareAlt
                       className="cursor-pointer"
                       title="Share output"
+                      onClick={() => handleShare(item?.result)}
                     />
                   </p>
                 </div>
@@ -208,19 +316,13 @@ const CurrentChat = ({ sideBar, setSideBar, token }) => {
             {!voice ? (
               <MdKeyboardVoice
                 className={"h-6 w-6 text-gray-300 cursor-pointer"}
-                onClick={() => {
-                  startListening();
-                  setVoice(!voice);
-                }}
+                onClick={handleVoiceClick}
                 title="Speak"
               />
             ) : (
               <MdKeyboardVoice
                 className="h-6 w-6 text-[var(--sec-color)] cursor-pointer"
-                onClick={() => {
-                  SpeechRecognition.stopListening();
-                  setVoice(!voice);
-                }}
+                onClick={handleVoiceClick}
               />
             )}
             {!loader ? (

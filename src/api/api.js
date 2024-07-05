@@ -34,4 +34,43 @@ const fn_getUserDataApi = async (data) => {
     }
 }
 
-export { fn_signupApi, fn_signinApi, fn_getUserDataApi }
+const fn_getHistoryApi = async (data) => {
+    try {
+        const response = await axios.get(`${ApiUrl}/chat-history`, {
+            headers: {
+                "Authorization": data,
+            }
+        });
+        return response;
+    } catch (error) {
+        return error?.response
+    }
+}
+
+const fn_getHistoryByIdApi = async (token, id) => {
+    try {
+        const response = await axios.get(`${ApiUrl}/chats/${id}/system-messages-preview/`, {
+            headers: {
+                "Authorization": token,
+            }
+        });
+        return response;
+    } catch (error) {
+        return error?.response
+    }
+}
+
+const fn_getChatHistoryByIdApi = async (token, id) => {
+    try {
+        const response = await axios.get(`${ApiUrl}/chats/${id}/messages/`, {
+            headers: {
+                "Authorization": token,
+            }
+        });
+        return response;
+    } catch (error) {
+        return error?.response
+    }
+}
+
+export { fn_signupApi, fn_signinApi, fn_getUserDataApi, fn_getHistoryApi, fn_getHistoryByIdApi, fn_getChatHistoryByIdApi }

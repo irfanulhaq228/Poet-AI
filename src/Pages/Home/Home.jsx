@@ -48,7 +48,7 @@ const Home = () => {
     <div>
       <Navbar tokenAvaiable={tokenAvaiable} />
       <Slider />
-      <div className="bg-white flex justify-center items-center px-5 py-14 sm:p-14 md:p-24 lg:p-32">
+      <div className="bg-white flex justify-center items-center px-5 py-14 sm:p-14 md:p-24 lg:p-20">
         <div className="w-full bg-black p-4 sm:p-10 rounded-[10px] flex flex-col gap-6 items-center justify-center">
           <p className="text-[20px] sm:text-[30px] font-[600] text-center md:w-[520px] text-white">
             Instant answers. Greater productivity. Endless inspiration.
