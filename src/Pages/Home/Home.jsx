@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { ThreeDots } from "react-loader-spinner";
 
 import Navbar from "../../Components/Navbar";
+import Testimonials from "./Testimonials";
 import Slider from "../../Components/Slider";
 import Sidebar from "../../Components/Sidebar";
 
@@ -60,6 +61,7 @@ const Home = () => {
           </button>
         </div>
       </div>
+      <Testimonials />
       <Sidebar />
     </div>
   );

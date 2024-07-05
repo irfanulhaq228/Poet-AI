@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mdbootstrap/react-testimonial-slider": "^1.0.0",
     "antd": "^5.19.0",
     "axios": "^1.7.2",
     "formik": "^2.4.6",
@@ -22,6 +23,8 @@
     "react-speech-recognition": "^3.10.0",
     "react-toastify": "^10.0.5",
     "regenerator-runtime": "^0.14.1",
+    "socket.io-client": "^4.7.5",
+    "websocket": "^1.0.35",
     "yup": "^1.4.0"
   },
   "devDependencies": {

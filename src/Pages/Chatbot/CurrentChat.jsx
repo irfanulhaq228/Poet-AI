@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { w3cwebsocket as W3CWebSocket } from "websocket";
 import { FaArrowRight } from "react-icons/fa6";
 import { BiSend } from "react-icons/bi";
 import { MdKeyboardVoice } from "react-icons/md";
@@ -7,9 +8,10 @@ import { FaShareAlt, FaRegCopy } from "react-icons/fa";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import { ThreeDots } from "react-loader-spinner";
+import { ColorRing } from "react-loader-spinner";
 
-const CurrentChat = ({ sideBar, setSideBar }) => {
+const CurrentChat = ({ sideBar, setSideBar, token }) => {
+  const newToken = token.substring(7);
   const [voice, setVoice] = useState(false);
   const [text, setText] = useState("");
   const [outputOccurs, setOutputOccurs] = useState(false);
@@ -28,21 +30,60 @@ const CurrentChat = ({ sideBar, setSideBar }) => {
     setText(transcript);
   }, [transcript]);
 
+  // ========================================= web socket =====================
+  const [messages, setMessages] = useState([]);
+  const clientRef = useRef(null);
+
   useEffect(() => {
-    if (loader === true) {
-      setTimeout(() => {
+    const client = new W3CWebSocket(
+      `wss://cvs2rd7n-8000.inc1.devtunnels.ms/ws/socket-server/${newToken}/`
+    );
+    clientRef.current = client;
+
+    client.onopen = () => {
+      console.log("WebSocket Client Connected");
+    };
+
+    client.onmessage = (message) => {
+      console.log("Received:", message.data);
+      if (!JSON.parse(message?.data).type) {
+        setOutputOccurs(true);
+        setText("");
         setLoader(false);
-      }, 1000);
-    }
-  }, [loader]);
+        const test = message?.data?.split("/n");
+        console.log(test);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          JSON.parse(message.data),
+        ]);
+      }
+    };
+
+    client.onclose = () => {
+      console.log("WebSocket Client Disconnected");
+    };
+
+    client.onerror = (error) => {
+      console.error("WebSocket Error:", error);
+    };
+
+    return () => {
+      client.close();
+    };
+  }, [newToken]);
 
   const fn_submit = (e) => {
     e.preventDefault();
-    console.log(text);
-    setText("");
-    setVoice(false);
-    setOutputOccurs(true);
+    const message = {
+      query: text,
+    };
     setLoader(true);
+    if (clientRef.current && clientRef.current.readyState === WebSocket.OPEN) {
+      clientRef.current.send(JSON.stringify(message));
+    } else {
+      console.log("Nothing");
+    }
+    setVoice(false);
   };
 
   return (
@@ -61,6 +102,11 @@ const CurrentChat = ({ sideBar, setSideBar }) => {
           </button>
         )}
         Poet AI
+        <select className="absolute right-1 sm:right-5 top-[6.5vh] sm:top-auto text-[12px] text-black font-[500] focus:outline-none border border-[var(--sec-color)] rounded-[3px] h-[25px]">
+          <option disabled className="p-1">Select Language</option>
+          <option selected className="p-1">Urdu</option>
+          <option className="p-1">Roman</option>
+        </select>
       </p>
       <div className="flex-1 flex flex-col justify-between w-full items-center">
         {/* Suggestions */}
@@ -127,65 +173,44 @@ const CurrentChat = ({ sideBar, setSideBar }) => {
         )}
         {/* output */}
         {outputOccurs && (
-          <div className="flex bg-[var(--main-color-blur)] rounded-xl flex-col p-3 overflow-y-auto h-[71vh] w-[95%] md:w-[700px] xl:w-[850px] mt-[24px] text-[15px]">
-            {/* input */}
-            <p className="bg-[var(--main-color)] rounded-xl p-3">
-              <p className="text-[17px] font-[600]">Input</p>A paragraph is
-              defined as “a group of sentences or a single sentence that forms a
-              unit” (Lunsford and Connors 116). Length and appearance do not
-              determine whether a section in a paper is a paragraph. For
-              instance, in some styles of writing, particularly journalistic
-              styles, a paragraph can be just one sentence long.
-            </p>
-            {/* output */}
-            {loader ? (
-              <div className="flex justify-center mt-1">
-                <ThreeDots
-                  visible={true}
-                  height="80"
-                  width="80"
-                  color="rgb(112, 62, 120)"
-                  radius="9"
-                  ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  wrapperClass=""
-                />
-              </div>
-            ) : (
-              <>
-                <p className="text-[17px] font-[600] my-2">Output</p>A paragraph
-                is defined as “a group of sentences or a single sentence that
-                forms a unit” (Lunsford and Connors 116). Length and appearance
-                do not determine whether a section in a paper is a paragraph.
-                For instance, in some styles of writing, particularly
-                journalistic styles, a paragraph can be just one sentence long.
-                A paragraph is defined as “a group of sentences or a single
-                sentence that forms a unit” (Lunsford and Connors 116). Length
-                and appearance do not determine whether a section in a paper is
-                a paragraph. For instance, in some styles of writing,
-                particularly journalistic styles, a paragraph can be just one
-                sentence long. A paragraph is defined as “a group of sentences
-                or a single sentence that forms a unit” (Lunsford and Connors
-                116). Length and appearance do not determine whether a section
-                in a paper is a paragraph. For instance, in some styles of
-                writing, particularly journalistic styles, a paragraph can be
-                just one sentence long. A paragraph is defined as “a group of
-                sentences or a single sentence that forms a unit” (Lunsford and
-                Connors 116).
-                <p className="flex justify-end gap-2">
-                  <FaRegCopy className="cursor-pointer" title="Copy output" />
-                  <FaShareAlt className="cursor-pointer" title="Share output" />
-                </p>
-                <p></p>
-              </>
-            )}
+          <div className="h-[71vh] overflow-y-auto sm:ps-5 sm:w-full flex flex-col items-center">
+            {outputOccurs &&
+              messages?.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex bg-[var(--main-color-blur)] rounded-xl flex-col p-3 w-full sm:w-[95%] md:w-[700px] xl:w-[850px] mt-[24px] text-[15px]"
+                >
+                  {/* input */}
+                  <div className="bg-[var(--main-color)] rounded-xl p-3">
+                    <p className="text-[17px] font-[600]">Profile</p>
+                    {item?.input}
+                  </div>
+                  {/* output */}
+                  <p className="text-[17px] font-[600] my-2">Poet Ai</p>
+                  <p
+                    dangerouslySetInnerHTML={{
+                      __html: JSON.stringify(item?.result).replace(
+                        /\\n/g,
+                        "<br>"
+                      ),
+                    }}
+                  />
+                  <p className="flex justify-end gap-2">
+                    <FaRegCopy className="cursor-pointer" title="Copy output" />
+                    <FaShareAlt
+                      className="cursor-pointer"
+                      title="Share output"
+                    />
+                  </p>
+                </div>
+              ))}
           </div>
         )}
         {/* inputs */}
         <div className="h-[15vh] flex justify-center w-full md:w-[700px] xl:w-[850px] flex-col gap-1.5">
-          <form className="mx-3 rounded-full px-5 h-[43px] flex items-center bg-white border-[2.5px] border-[var(--main-color)] gap-3">
+          <form className="sm:mx-3 rounded-full px-5 h-[43px] flex items-center bg-white border-[2.5px] border-[var(--main-color)] gap-3">
             <input
-              className="focus:outline-none text-[14px] font-[500] flex-1"
+              className="focus:outline-none text-[14px] font-[500] flex-1 w-auto"
               placeholder={
                 !voice
                   ? `Welcome to AI-Poet. How may i assist you in exploring the poetic masterpiece?`
@@ -212,13 +237,37 @@ const CurrentChat = ({ sideBar, setSideBar }) => {
                 }}
               />
             )}
-            <button
-              type="submit"
-              className="your-button-class"
-              onClick={(e) => fn_submit(e)}
-            >
-              <BiSend className="h-6 w-6 text-[var(--sec-color)] cursor-pointer" />
-            </button>
+            {!loader ? (
+              <button
+                type="submit"
+                className="your-button-class"
+                onClick={(e) => fn_submit(e)}
+              >
+                <BiSend className="h-6 w-6 text-[var(--sec-color)] cursor-pointer" />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled
+                className="your-button-class cursor-not-allowed"
+              >
+                <ColorRing
+                  visible={true}
+                  height="30"
+                  width="30"
+                  ariaLabel="color-ring-loading"
+                  wrapperStyle={{}}
+                  wrapperClass="color-ring-wrapper"
+                  colors={[
+                    "rgb(221, 180, 228)",
+                    "rgb(221, 180, 228)",
+                    "rgb(221, 180, 228)",
+                    "rgb(221, 180, 228)",
+                    "rgb(221, 180, 228)",
+                  ]}
+                />
+              </button>
+            )}
           </form>
           <p className="text-[13px] text-center px-5">
             An innovative AI-driven platform that crafts personalized poetry on

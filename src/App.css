@@ -61,3 +61,16 @@ body {
   border-radius: 20px;
   margin: 50px 0;
 }
+
+.ant-carousel .slick-prev, 
+.ant-carousel .slick-next {
+  color: black;
+  z-index: 1;
+  scale: 1.5;
+}
+
+.ant-carousel .slick-prev:hover,
+.ant-carousel .slick-next:hover {
+  color: black;
+}
+
