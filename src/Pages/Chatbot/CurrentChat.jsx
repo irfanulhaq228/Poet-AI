@@ -10,7 +10,7 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import { ColorRing } from "react-loader-spinner";
-import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const CurrentChat = ({
   sideBar,
@@ -22,6 +22,7 @@ const CurrentChat = ({
   outputOccurs,
   setOutputOccurs,
 }) => {
+  const navigate = useNavigate();
   const newToken = token.substring(7);
   const containerRef = useRef(null);
   const clientRef = useRef(null);
@@ -187,11 +188,15 @@ const CurrentChat = ({
           </button>
         )}
         Poet AI
-        <select className="absolute right-1 sm:right-5 top-[6.5vh] sm:top-auto text-[12px] text-black font-[500] focus:outline-none border border-[var(--sec-color)] rounded-[3px] h-[25px]">
-          <option disabled className="p-1">
+        <select className="absolute right-1 sm:right-5 top-[6.5vh] sm:top-auto text-[12px] text-black font-[500] focus:outline-none border border-[var(--sec-color)] rounded-[3px] h-[25px]" onChange={(e) => {
+          if(e.target.value === "Urdu"){
+            navigate("/urdu-poetry")
+          }
+        }}>
+          <option disabled selected className="p-1">
             Select Language
           </option>
-          <option selected className="p-1">
+          <option className="p-1">
             Urdu
           </option>
           <option className="p-1">Roman</option>

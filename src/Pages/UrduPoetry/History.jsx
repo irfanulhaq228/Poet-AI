@@ -19,10 +19,7 @@ const History = ({
   loaderHistory,
   setLoaderHistory,
   setMessages,
-  setOutputOccurs,
-  fn_getHistory,
-  allHistoryLoader,
-  setAllHistoryLoader
+  setOutputOccurs
 }) => {
   const navigate = useNavigate();
   return (
@@ -65,63 +62,42 @@ const History = ({
               setSelectedHistory(0);
               setMessages([]);
               setOutputOccurs(false);
-              fn_getHistory();
-              setAllHistoryLoader(true);
             }}
           >
             New Chat
           </p>
-          {!allHistoryLoader ? (
-            history?.map((item, index) => (
-              <p
-                key={index}
-                className={`relative px-3 h-[32px] rounded-md flex justify-between items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
-                  selectedHistory === item.id
-                    ? "bg-[var(--sec-color-blur)]"
-                    : "bg-transparent"
-                }`}
-                onClick={() => {
-                  fn_getChatHistoryById(item.id);
-                  setLoaderHistory(item?.id);
-                }}
-              >
-                {item?.text}
-                {loaderHistory === item?.id && (
-                  <ColorRing
-                    visible={true}
-                    height="25"
-                    width="25"
-                    ariaLabel="color-ring-loading"
-                    wrapperClass="color-ring-wrapper"
-                    colors={[
-                      "rgb(112, 62, 120)",
-                      "rgb(112, 62, 120)",
-                      "rgb(112, 62, 120)",
-                      "rgb(112, 62, 120)",
-                      "rgb(112, 62, 120)",
-                    ]}
-                  />
-                )}
-              </p>
-            ))
-          ) : (
-            <div className="flex justify-center">
-            <ColorRing
-              visible={true}
-              height="30"
-              width="30"
-              ariaLabel="color-ring-loading"
-              wrapperClass="color-ring-wrapper"
-              colors={[
-                "rgb(112, 62, 120)",
-                "rgb(112, 62, 120)",
-                "rgb(112, 62, 120)",
-                "rgb(112, 62, 120)",
-                "rgb(112, 62, 120)",
-              ]}
-            />
-            </div>
-          )}
+          {history?.map((item, index) => (
+            <p
+              key={index}
+              className={`relative px-3 h-[32px] rounded-md flex justify-between items-center text-[var(--sec-color)] cursor-pointer hover:outline outline-1 ${
+                selectedHistory === item.id
+                  ? "bg-[var(--sec-color-blur)]"
+                  : "bg-transparent"
+              }`}
+              onClick={() => {
+                fn_getChatHistoryById(item.id);
+                setLoaderHistory(item?.id);
+              }}
+            >
+              {item?.text}
+              {loaderHistory === item?.id && (
+                <ColorRing
+                  visible={true}
+                  height="25"
+                  width="25"
+                  ariaLabel="color-ring-loading"
+                  wrapperClass="color-ring-wrapper"
+                  colors={[
+                    "rgb(112, 62, 120)",
+                    "rgb(112, 62, 120)",
+                    "rgb(112, 62, 120)",
+                    "rgb(112, 62, 120)",
+                    "rgb(112, 62, 120)",
+                  ]}
+                />
+              )}
+            </p>
+          ))}
         </div>
       </div>
       <div className="min-h-[65px] absolute w-full bottom-0 flex items-center justify-center">

@@ -12,7 +12,7 @@ import {
   fn_getUserDataApi,
 } from "../../api/api";
 
-const Chatbot = () => {
+const UrduPoetry = () => {
   const navigate = useNavigate();
   const [sideBar, setSideBar] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -24,11 +24,9 @@ const Chatbot = () => {
   const token = Cookies.get("Authorization");
   const [messages, setMessages] = useState([]);
   const [outputOccurs, setOutputOccurs] = useState(false);
-  const [allHistoryLoader, setAllHistoryLoader] = useState(false);
   useEffect(() => {
-    document.title = "Poet AI - Chatbot";
+    document.title = "Poet AI - Urdu Poetry";
     window.scrollTo(0, 0);
-    setAllHistoryLoader(true)
     fn_getUserData();
     fn_getHistory();
   }, []);
@@ -63,7 +61,6 @@ const Chatbot = () => {
             }
           })
         );
-        setAllHistoryLoader(false);
         setHistory(updatedData);
       }
     } catch (error) {
@@ -97,23 +94,6 @@ const Chatbot = () => {
   }
   return (
     <div className="flex">
-      <History
-        sideBar={sideBar}
-        setSideBar={setSideBar}
-        userData={userData}
-        token={token}
-        history={history}
-        selectedHistory={selectedHistory}
-        setSelectedHistory={setSelectedHistory}
-        fn_getChatHistoryById={fn_getChatHistoryById}
-        loaderHistory={loaderHistory}
-        setLoaderHistory={setLoaderHistory}
-        setMessages={setMessages}
-        setOutputOccurs={setOutputOccurs}
-        fn_getHistory={fn_getHistory}
-        allHistoryLoader={allHistoryLoader}
-        setAllHistoryLoader={setAllHistoryLoader}
-      />
       <CurrentChat
         sideBar={sideBar}
         setSideBar={setSideBar}
@@ -129,4 +109,4 @@ const Chatbot = () => {
   );
 };
 
-export default Chatbot;
+export default UrduPoetry;
